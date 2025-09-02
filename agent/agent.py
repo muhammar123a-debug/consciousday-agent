@@ -25,6 +25,7 @@ OUTPUT:
 def get_agent_response(journal, intention, dream, priorities):
     api_key = st.secrets["OPENROUTER_API_KEY"]
 
+    # ✅ Force OpenRouter endpoint
     llm = ChatOpenAI(
         model="openai/gpt-3.5-turbo",
         base_url="https://openrouter.ai/api/v1",
