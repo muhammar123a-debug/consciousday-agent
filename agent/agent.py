@@ -47,3 +47,4 @@ def get_agent_response(journal, intention, dream, priorities):
 
     response = llm.invoke(final_prompt)
     return response.content
+
