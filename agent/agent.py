@@ -28,8 +28,8 @@ def get_agent_response(journal, intention, dream, priorities):
     # ✅ Force OpenRouter endpoint
     llm = ChatOpenAI(
         model="openai/gpt-3.5-turbo",
-        base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
+        base_url="https://openrouter.ai/api/v1",
         temperature=0.7
     )
 
