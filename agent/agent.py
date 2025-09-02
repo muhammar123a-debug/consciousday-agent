@@ -22,6 +22,7 @@ OUTPUT:
 """
 
 def get_agent_response(journal, intention, dream, priorities):
+    # API key from Streamlit secrets
     api_key = st.secrets["OPENROUTER_API_KEY"]
 
     client = OpenAI(
@@ -36,10 +37,11 @@ def get_agent_response(journal, intention, dream, priorities):
         priorities=priorities
     )
 
+    # ✅ Correct model slug for OpenRouter
     response = client.chat.completions.create(
-        model="openai/gpt-3.5-turbo",
+        model="openrouter/openai/gpt-3.5-turbo",
         messages=[{"role": "user", "content": final_prompt}],
         temperature=0.7
     )
 
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message.content
