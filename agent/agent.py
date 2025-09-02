@@ -1,5 +1,5 @@
 from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI  
+from langchain_openai import ChatOpenAI
 import streamlit as st
 
 PROMPT_TEMPLATE = """
@@ -26,7 +26,7 @@ def get_agent_response(journal, intention, dream, priorities):
     api_key = st.secrets["OPENROUTER_API_KEY"]
 
     llm = ChatOpenAI(
-        model="openai/gpt-3.5-turbo",      
+        model="openai/gpt-3.5-turbo",   # OpenRouter ke liye yehi likhna
         base_url="https://openrouter.ai/api/v1",
         api_key=api_key,
         temperature=0.7
