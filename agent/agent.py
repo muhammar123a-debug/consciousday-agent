@@ -1,5 +1,4 @@
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+from openai import OpenAI
 import streamlit as st
 
 PROMPT_TEMPLATE = """
@@ -25,26 +24,22 @@ OUTPUT:
 def get_agent_response(journal, intention, dream, priorities):
     api_key = st.secrets["OPENROUTER_API_KEY"]
 
-    # ✅ Force OpenRouter endpoint
-    llm = ChatOpenAI(
-        model="openai/gpt-3.5-turbo",
+    client = OpenAI(
         api_key=api_key,
-        base_url="https://openrouter.ai/api/v1",
-        temperature=0.7
+        base_url="https://openrouter.ai/api/v1"
     )
 
-    prompt = PromptTemplate(
-        input_variables=["journal", "intention", "dream", "priorities"],
-        template=PROMPT_TEMPLATE,
-    )
-
-    final_prompt = prompt.format(
+    final_prompt = PROMPT_TEMPLATE.format(
         journal=journal,
         intention=intention,
         dream=dream,
         priorities=priorities
     )
 
-    response = llm.invoke(final_prompt)
-    return response.content
+    response = client.chat.completions.create(
+        model="openai/gpt-3.5-turbo",
+        messages=[{"role": "user", "content": final_prompt}],
+        temperature=0.7
+    )
 
+    return response.choices[0].message.content

@@ -1,3 +1,2 @@
 streamlit
-langchain
-langchain-openai>=0.1.7
+openai>=1.0.0
