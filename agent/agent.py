@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
 PROMPT_TEMPLATE = """
 You are a daily reflection and planning assistant. Your goal is to:
@@ -28,11 +28,13 @@ def get_agent_response(journal, intention, dream, priorities):
         if not api_key:
             return "API key not found in Streamlit secrets!"
 
-        # 2️⃣ Configure OpenAI client for OpenRouter
-        openai.api_key = api_key
-        openai.api_base = "https://openrouter.ai/api/v1"  # OpenRouter base URL
+        # 2️⃣ Initialize OpenAI client for OpenRouter (v1.0+ style)
+        client = OpenAI(
+            api_key=api_key,
+            api_base="https://openrouter.ai/api/v1"
+        )
 
-        # 3️⃣ Prepare the final prompt
+        # 3️⃣ Prepare final prompt
         final_prompt = PROMPT_TEMPLATE.format(
             journal=journal,
             intention=intention,
@@ -40,8 +42,8 @@ def get_agent_response(journal, intention, dream, priorities):
             priorities=priorities
         )
 
-        # 4️⃣ Make the API call
-        response = openai.ChatCompletion.create(
+        # 4️⃣ Make API call using new interface
+        response = client.chat.completions.create(
             model="gpt-4o-mini",  # OpenRouter model
             messages=[
                 {"role": "system", "content": "You are a helpful daily reflection assistant."},
@@ -50,7 +52,7 @@ def get_agent_response(journal, intention, dream, priorities):
             temperature=0.7
         )
 
-        # 5️⃣ Return the assistant response
+        # 5️⃣ Return assistant response safely
         return response.choices[0].message["content"]
 
     except Exception as e:
