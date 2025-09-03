@@ -37,7 +37,7 @@ def get_agent_response(journal, intention, dream, priorities):
     )
 
     response = client.chat.completions.create(
-        model="openai/gpt-3.5-turbo",  # ✅ correct slug
+        model="openai/gpt-3.5-turbo",
         messages=[{"role": "user", "content": final_prompt}],
         temperature=0.7
     )
