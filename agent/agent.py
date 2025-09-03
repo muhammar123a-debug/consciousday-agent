@@ -1,5 +1,5 @@
-from openai import OpenAI
 import streamlit as st
+from openai import OpenAI
 
 PROMPT_TEMPLATE = """
 You are a daily reflection and planning assistant. Your goal is to:
@@ -26,7 +26,7 @@ def get_agent_response(journal, intention, dream, priorities):
 
     client = OpenAI(
         api_key=api_key,
-        base_url="https://openrouter.ai/api/v1"
+        base_url="https://openrouter.ai/api/v1"  # force OpenRouter
     )
 
     final_prompt = PROMPT_TEMPLATE.format(
@@ -37,8 +37,11 @@ def get_agent_response(journal, intention, dream, priorities):
     )
 
     response = client.chat.completions.create(
-        model="openai/gpt-3.5-turbo",
-        messages=[{"role": "user", "content": final_prompt}],
+        model="openai/gpt-3.5-turbo",  # ✅ OpenRouter slug
+        messages=[
+            {"role": "system", "content": "You are a helpful daily reflection assistant."},
+            {"role": "user", "content": final_prompt}
+        ],
         temperature=0.7
     )
 
