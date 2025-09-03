@@ -26,7 +26,7 @@ def get_agent_response(journal, intention, dream, priorities):
 
     client = OpenAI(
         api_key=api_key,
-        base_url="https://openrouter.ai/api/v1"  # force OpenRouter
+        base_url="https://openrouter.ai/api/v1" 
     )
 
     final_prompt = PROMPT_TEMPLATE.format(
@@ -37,7 +37,7 @@ def get_agent_response(journal, intention, dream, priorities):
     )
 
     response = client.chat.completions.create(
-        model="openai/gpt-3.5-turbo",  # ✅ OpenRouter slug
+        model="openai/gpt-3.5-turbo", 
         messages=[
             {"role": "system", "content": "You are a helpful daily reflection assistant."},
             {"role": "user", "content": final_prompt}
