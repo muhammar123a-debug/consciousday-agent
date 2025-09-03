@@ -1,8 +1,9 @@
+import os
 import streamlit as st
 from openai import OpenAI
 
 PROMPT_TEMPLATE = """
-You are a daily reflection and planning assistant. Your goal is to:
+You are a daily reflection and planning assistant. Your goal is:
 1. Reflect on the user's journal and dream input
 2. Interpret the user's emotional and mental state
 3. Understand their intention and 3 priorities
@@ -28,13 +29,11 @@ def get_agent_response(journal, intention, dream, priorities):
         if not api_key:
             return "API key not found in Streamlit secrets!"
 
-        # 2️⃣ Initialize OpenAI client for OpenRouter (v1.0+ style)
-        client = OpenAI(
-            api_key=api_key,
-            api_base="https://openrouter.ai/api/v1"
-        )
+        # 2️⃣ Set environment variables for OpenAI v1.0+ (required by OpenRouter)
+        os.environ["OPENAI_API_KEY"] = api_key
+        os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
 
-        # 3️⃣ Prepare final prompt
+        # 3️⃣ Prepare the final prompt
         final_prompt = PROMPT_TEMPLATE.format(
             journal=journal,
             intention=intention,
@@ -42,9 +41,12 @@ def get_agent_response(journal, intention, dream, priorities):
             priorities=priorities
         )
 
-        # 4️⃣ Make API call using new interface
+        # 4️⃣ Initialize OpenAI client
+        client = OpenAI()  # no params here in v1.0+
+
+        # 5️⃣ Make the API call
         response = client.chat.completions.create(
-            model="gpt-4o-mini",  # OpenRouter model
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a helpful daily reflection assistant."},
                 {"role": "user", "content": final_prompt}
@@ -52,7 +54,7 @@ def get_agent_response(journal, intention, dream, priorities):
             temperature=0.7
         )
 
-        # 5️⃣ Return assistant response safely
+        # 6️⃣ Return the assistant response
         return response.choices[0].message["content"]
 
     except Exception as e:
