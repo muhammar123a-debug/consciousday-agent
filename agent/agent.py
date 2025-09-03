@@ -26,7 +26,7 @@ def get_agent_response(journal, intention, dream, priorities):
 
     client = OpenAI(
         api_key=api_key,
-        base_url="https://openrouter.ai/api/v1" 
+        api_base="https://openrouter.ai/api/v1"  # Correct key for OpenRouter
     )
 
     final_prompt = PROMPT_TEMPLATE.format(
@@ -36,13 +36,16 @@ def get_agent_response(journal, intention, dream, priorities):
         priorities=priorities
     )
 
-    response = client.chat.completions.create(
-        model="openai/gpt-3.5-turbo", 
-        messages=[
-            {"role": "system", "content": "You are a helpful daily reflection assistant."},
-            {"role": "user", "content": final_prompt}
-        ],
-        temperature=0.7
-    )
-
-    return response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # OpenRouter model slug
+            messages=[
+                {"role": "system", "content": "You are a helpful daily reflection assistant."},
+                {"role": "user", "content": final_prompt}
+            ],
+            temperature=0.7
+        )
+        # OpenRouter may return 'content' slightly differently
+        return response.choices[0].message["content"]
+    except Exception as e:
+        return f"Error calling API: {e}"
