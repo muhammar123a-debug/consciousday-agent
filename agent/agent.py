@@ -29,11 +29,11 @@ def get_agent_response(journal, intention, dream, priorities):
         if not api_key:
             return "API key not found in Streamlit secrets!"
 
-        # 2️⃣ Set environment variables for OpenAI v1.0+ (required by OpenRouter)
+        # 2️⃣ Set environment variables for OpenRouter
         os.environ["OPENAI_API_KEY"] = api_key
         os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
 
-        # 3️⃣ Prepare the final prompt
+        # 3️⃣ Prepare final prompt
         final_prompt = PROMPT_TEMPLATE.format(
             journal=journal,
             intention=intention,
@@ -41,12 +41,12 @@ def get_agent_response(journal, intention, dream, priorities):
             priorities=priorities
         )
 
-        # 4️⃣ Initialize OpenAI client
-        client = OpenAI()  # no params here in v1.0+
+        # 4️⃣ Initialize OpenAI client (v1.0+)
+        client = OpenAI()
 
-        # 5️⃣ Make the API call
+        # 5️⃣ Call OpenRouter API
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o-mini",  # OpenRouter model
             messages=[
                 {"role": "system", "content": "You are a helpful daily reflection assistant."},
                 {"role": "user", "content": final_prompt}
@@ -54,8 +54,12 @@ def get_agent_response(journal, intention, dream, priorities):
             temperature=0.7
         )
 
-        # 6️⃣ Return the assistant response
-        return response.choices[0].message["content"]
+        # 6️⃣ Safely return the content
+        if response.choices and len(response.choices) > 0:
+            return response.choices[0].message["content"]
+        else:
+            return "No response received from the API."
 
     except Exception as e:
+        # 7️⃣ Detailed error handling
         return f"Error calling API: {e}"
